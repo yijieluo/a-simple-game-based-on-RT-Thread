@@ -69,12 +69,12 @@ void bottom_obstacle(rt_uint8_t x, rt_uint8_t height)//y=63
 void generate_map(rt_uint8_t level, rt_uint8_t h[][2])
 {
 		int i;
-		rt_uint8_t m,n;
+		rt_int16_t m,n;
 		for(i=0;i<100;i++)
 		{
 				m = 15 + (int)15*sin(rand()); //top_obstacle的高度
 				n = 28 - level + rand()%10/(level+1); //空余的高度  //飞机的高度为12
-			  if( i>=1 && abs(m-h[i-1][0]) > 18+level ) //控制两次的差值不能太大
+			  if((i>=1 && abs(m-h[i-1][0]) > 18+level) || 64-m-n <= 0) //控制两次的差值不能太大
 				{
 					i--;
 					continue;

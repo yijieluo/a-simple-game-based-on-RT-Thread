@@ -23,17 +23,20 @@ static void thread3_entry(void *parameter);
 static void thread4_entry(void *parameter);
 
 /* 游戏相关 */
-rt_uint16_t level = EASY; //0,1,2分别对应easy, middle, hard
+rt_uint8_t level = EASY; //0,1,2分别对应easy, middle, hard
 rt_uint32_t grades[MAX1] = {0}; //分数
 void game_over(rt_uint32_t grade);
-
+rt_uint8_t choose_level(rt_uint8_t j);
 /* 线程 menu 入口 */
 static void thread1_entry(void *parameter)
 {
-		OLED_Clear();
-		rt_uint16_t i = 26;
+		rt_uint8_t i = 26,j;
+		if(level == EASY)j=26;
+		else if(level == MIDDLE)j=41;
+		else j=56;
 		while(1)
 		{		
+				OLED_Clear();
 				arrow(10,i);
 				OLED_ShowString(25, 0, "helicopter");
 				OLED_ShowString(12, 20, "start");
@@ -70,11 +73,18 @@ static void thread1_entry(void *parameter)
 						}
 						else if (str == mb_str2 && i == 41)//点击level
 						{
-								/*未完待续*/
+								level = choose_level(j);
 						}
 						else if (str == mb_str2 && i == 56)//点击grade
 						{
-								/*未完待续*/
+								OLED_Clear();
+								OLED_ShowString(20,0,"Top3 Grades");
+								OLED_ShowString(20,20,"1: ");OLED_ShowNumber(40,20,grades[0],4,12);
+								OLED_ShowString(20,30,"2: ");OLED_ShowNumber(40,30,grades[1],4,12);
+								OLED_ShowString(20,40,"3: ");OLED_ShowNumber(40,40,grades[2],4,12);
+								OLED_Refresh_Gram();
+								if(rt_mb_recv(&mb, (rt_uint32_t *)&str, RT_WAITING_FOREVER) == RT_EOK);
+								OLED_Clear();
 						}
 						else ;
         }
@@ -151,7 +161,7 @@ static void thread3_entry(void *parameter)
 												if(check_crash(x,y,tmp,h[n][0],h[n][1],n) == RT_FALSE)
 												{
 														game_over((rt_uint32_t)(rt_tick_get() - start_time)/10);
-														rt_thread_mdelay(2500);
+														rt_thread_mdelay(1500);
 														tid1 = rt_thread_create("thread1",
 																										thread1_entry, RT_NULL,
 																										THREAD_STACK_SIZE1,
@@ -236,13 +246,60 @@ void game_over(rt_uint32_t grade)
 		OLED_ShowString(25,30,"grade:");
 		OLED_ShowNumber(75,30,grade,4,12);
 		OLED_Refresh_Gram();
-		int i;
-		for(i=MAX1;i>0;i--)
+		int i,j;
+		for(i=0;i<MAX1;i++) //按序插入新成绩
 		{
 				if(grade > grades[i])
 				{
-						grades[i] = grades[i-1];
-						grades[i-1] = grade;
+						for(j = MAX1-1;j>i;j--)
+						{
+								grades[j] = grades[j-1];
+						}
+						grades[i] = grade;
+						break;
+				}
+		}
+}
+rt_uint8_t choose_level(rt_uint8_t j)
+{
+		OLED_Clear();
+
+		arrow(10,j);
+		OLED_ShowString(25, 0, "Level");
+		OLED_ShowString(12, 20, "easy");
+		OLED_ShowString(12, 35, "middle");
+		OLED_ShowString(12, 50, "hard");
+		OLED_Refresh_Gram();
+		char *str;
+		while(1)
+		{
+				if (rt_mb_recv(&mb, (rt_uint32_t *)&str, RT_WAITING_FOREVER) == RT_EOK)
+				{
+						if (str == mb_str1)//切换箭头
+						{
+								j += 15;
+								if(j > 26+15*2)j=26;
+						}
+						if(str == mb_str2 && j == 26)
+						{
+								return 0;
+						}
+						if(str == mb_str2 && j == 41)
+						{
+								return 1;
+						}
+						if(str == mb_str2 && j == 56)
+						{
+								return 2;
+						}
+						OLED_Clear();
+						arrow(10,j);
+						OLED_ShowString(25, 0, "Level");
+						OLED_ShowString(12, 20, "easy");
+						OLED_ShowString(12, 35, "middle");
+						OLED_ShowString(12, 50, "hard");
+						OLED_Refresh_Gram();
+						rt_thread_mdelay(50);
 				}
 		}
 }
