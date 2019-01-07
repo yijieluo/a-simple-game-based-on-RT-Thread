@@ -9,22 +9,25 @@
 【所用物料及实物图】
 ------------------
     
-   ### 材料：一个stm32最小系统（带按键和led），oled显示屏，ST-link下载器和串口线（在淘宝店铺平衡小车之家都能买到）
+   ##### 材料：
+   一个stm32最小系统（带按键和led），oled显示屏，ST-link下载器和串口线（在淘宝店铺平衡小车之家都能买到）
     
-   ### 实物图：
- 
+   ##### 实物图：
 			 
 			 菜单界面							   难度选择
  
 			 
 			 分数查看							   游戏界面
-   ### 主控：STM32F103C8T6		
-   ### 编译环境：Keil 5		
-   ### RT-Thread版本：4.0.0
+   ##### 主控：
+   STM32F103C8T6		
+   ##### 编译环境：
+   Keil 5		
+   ##### RT-Thread版本：
+   4.0.0
 
 【硬件设计】
 -----------
-   
+
     一个主控，一个按键（PA5），一个led（PA4），
     oled显示屏（IIC协议RST -> PB3, DC ->PA15, SCL->PB5,SDA->PB4）
 
@@ -64,5 +67,5 @@
 【演示视频】
 ------------
     
-   [https://v.youku.com/v_show/id_XMzk5NjY1MTcwNA==.html](https://v.youku.com/v_show/id_XMzk5NjY1MTcwNA==.html)
+    [https://v.youku.com/v_show/id_XMzk5NjY1MTcwNA==.html](https://v.youku.com/v_show/id_XMzk5NjY1MTcwNA==.html)
     
